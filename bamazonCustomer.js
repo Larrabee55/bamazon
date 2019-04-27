@@ -17,5 +17,17 @@ var connection = mysql.createConnection({
 
 connection.connect(function (err) {
   if (err) throw err;
-  runSearch();
+  displayItems();
 });
+
+function displayItems() {
+  connection.query("SELECT * FROM products", function (err, results) {
+    if (err) throw err;
+
+    var choiceArray = [];
+    for (var i = 0; i < results.length; i++) {
+      choiceArray.push("ID: " + results[i].id + " Product: " + results[i].product_name + " Price: $" + results[i].price);
+    }
+    console.log(choiceArray);
+  })
+}
