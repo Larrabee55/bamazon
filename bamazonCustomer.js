@@ -31,15 +31,14 @@ function displayItems() {
 
     inquirer
       .prompt([{
-        name: "choices",
+        name: "buyOrExit",
         type: "list",
-        choices: ["Buy an Item", "Exit"]
+        choices: ["Buy", "Exit"]
       }]).then(function (answer) {
-
-        if ("Buy an Item") {
+        if (answer.buyOrExit === "Buy") {
           buyAnItem()
         } else {
-          // exit
+          connection.end();
         }
       })
   });
@@ -75,8 +74,6 @@ function buyAnItem() {
             chosenProduct = results[i];
           }
         }
-        console.log(chosenProduct.stock_quantity)
-        console.log(answer.quantityWanted)
 
         if (chosenProduct.stock_quantity > parseInt(answer.quantityWanted)) {
           var newQuantity = chosenProduct.stock_quantity - answer.quantityWanted;
@@ -104,9 +101,3 @@ function buyAnItem() {
       });
   });
 }
-
-// {
-//   name: "Quantiy",
-//   tpye: "input",
-//   message: "How many do you want to buy?"
-// }
