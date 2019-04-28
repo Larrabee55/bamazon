@@ -71,7 +71,27 @@ function viewProducts() {
 }
 
 function viewLowInventory() {
+  connection.query("SELECT * FROM products", function (err, results) {
+    if (err) throw err;
+    // sets an array for the products to be put into
+    var choiceArray = [];
+    // for loop to go through the products and push them to the array
+    for (var i = 0; i < results.length; i++) {
+      if (results[i].stock_quantity < 6) {
+        choiceArray.push("ID: " + results[i].id + " Product: " + results[i].product_name + " Price: $" + results[i].price + " Quantity:" + results[i].stock_quantity);
+      }
+    }
+    console.log(choiceArray)
 
+    inquirer
+      .prompt({
+        name: "exit",
+        type: "list",
+        choices: ["EXIT to menu"]
+      }).then(function (answer) {
+        startOptions()
+      });
+  });
 }
 
 function addInventory() {
