@@ -95,6 +95,65 @@ function viewLowInventory() {
 }
 
 function addInventory() {
+  connection.query("SELECT * FROM products", function (err, results) {
+    if (err) throw err;
+    // has the user choose which item they want to buy by id
+    inquirer
+      .prompt([{
+          name: "choice",
+          type: "rawlist",
+          choices: function () {
+            var choicesArray = [];
+            for (var i = 0; i < results.length; i++) {
+              choicesArray.push(results[i].id);
+            }
+            return choicesArray;
+          },
+          message: "Which procuct would you like to stock? (by ID)"
+        },
+        // asks the user how many they want to stock
+        {
+          name: "addStock",
+          type: "number",
+          message: "How much are you adding?"
+        }
+      ]).then(function (answer) {
+        var chosenProduct;
+        // get the information of the chosen item
+        for (var i = 0; i < results.length; i++) {
+          if (results[i].id === answer.choice) {
+            chosenProduct = results[i];
+          }
+        }
+        console.log(chosenProduct.stock_quantity)
+        console.log(answer.addStock)
+        var newQuantity = chosenProduct.stock_quantity + answer.addStock;
+
+        connection.query(
+          "UPDATE products SET ? WHERE ?",
+          [{
+              stock_quantity: newQuantity
+            },
+            {
+              id: chosenProduct.id
+            }
+          ],
+          function (err) {
+            if (err) throw err;
+            //
+            console.log("You successfully added " + answer.addStock + " to the inventory!")
+            inquirer
+              .prompt({
+                name: "exit",
+                type: "list",
+                choices: ["EXIT to menu"]
+              }).then(function (answer) {
+                startOptions()
+              });
+          }
+        );
+      });
+  });
 
 }
 
